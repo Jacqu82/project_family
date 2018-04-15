@@ -17,10 +17,10 @@ class ChildEmbeddedForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('family', EntityType::class, [
-                'class' => Family::class,
-                'choice_label' => 'familyName'
-            ])
+//            ->add('family', EntityType::class, [
+//                'class' => Family::class,
+//                'choice_label' => 'familyName'
+//            ])
             ->add('name')
             ->add('dateOfBirth', BirthdayType::class, [
                 'widget' => 'single_text'

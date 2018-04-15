@@ -25,9 +25,6 @@ class ChildController extends Controller
      */
     public function showAction(Child $child)
     {
-        $em = $this->getDoctrine()->getManager();
-        $child = $em->getRepository(Child::class)->find($child->getId());
-
         return $this->render('child/show.html.twig', [
             'child' => $child
         ]);
@@ -43,8 +40,6 @@ class ChildController extends Controller
     public function deleteAction(Child $child)
     {
         $em = $this->getDoctrine()->getManager();
-        $child = $em->getRepository(Child::class)->findOneBy(['id' => $child->getId()]);
-
         $em->remove($child);
         $em->flush();
 

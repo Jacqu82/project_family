@@ -1,5 +1,5 @@
 AppBundle\Entity\Family:
-    family_{1..100}:
+    family_{1..1000}:
         familyName: '<lastName()>'
         fatherName: '<firstName()>'
         fatherDateOfBirth: '<dateTimeBetween("-60 years", "-30 years")>'
@@ -7,7 +7,7 @@ AppBundle\Entity\Family:
         motherDateOfBirth: '<dateTimeBetween("-55 years", "-25 years")>'
 
 AppBundle\Entity\Child:
-    child_{1..250}:
+    child_{1..2500}:
         family: '@family_*'
         name: '<firstName()>'
-        dateOfBirth: '<dateTimeBetween("-18 years", "-1 years")>'
+        dateOfBirth: '<dateTimeBetween("-18 years", "-1 months")>'

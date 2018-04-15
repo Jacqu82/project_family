@@ -1,13 +1,11 @@
 <?php
 
-
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Child;
 use AppBundle\Entity\Family;
 use AppBundle\Form\FamilyType;
 use Knp\Component\Pager\PaginatorInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -62,9 +60,6 @@ class FamilyController extends Controller
      */
     public function showAction(Family $family)
     {
-        $em = $this->getDoctrine()->getManager();
-        $family = $em->getRepository(Family::class)->find($family->getId());
-
         return $this->render('family/show.html.twig', [
             'family' => $family
         ]);
@@ -73,6 +68,7 @@ class FamilyController extends Controller
     /**
      * @Route("/list/{page}", name="family_list", defaults={"page": 1})
      *
+     * @param $page
      * @return Response
      */
     public function listAction($page)
@@ -121,18 +117,15 @@ class FamilyController extends Controller
     {
         $family = new Family();
         $em = $this->getDoctrine()->getManager();
-        $familyId = $em->getRepository(Family::class)->findOneBy(['id' => $family->getId()]);
-
-        $ageAvg = $em->getRepository(Family::class)->findAverageParentsAge();
-        $childrenAvg = $em->getRepository(Child::class)->findAvgChildInFamily($familyId);
-        $biggestFamily = $em->getRepository(Child::class)->findBiggestFamily();
-        $mostOccurrencesChildNames = $em->getRepository(Child::class)->findMostOccurrencesChildName();
+        $childRepository = $em->getRepository(Child::class);
+        $familyRepository = $em->getRepository(Family::class);
+        $familyId = $familyRepository->findOneBy(['id' => $family->getId()]);
 
         return $this->render('family/stats.html.twig', [
-            'ageAvg' => $ageAvg,
-            'childrenAvg' => $childrenAvg,
-            'biggestFamilies' => $biggestFamily,
-            'mostOccurrencesChildNames' => $mostOccurrencesChildNames
+            'ageAvg' => $familyRepository->findAverageParentsAge(),
+            'childrenAvg' => $childRepository->findAvgChildInFamily($familyId),
+            'biggestFamilies' => $childRepository->findBiggestFamily(),
+            'mostOccurrencesChildNames' => $childRepository->findMostOccurrencesChildName()
         ]);
     }
 }

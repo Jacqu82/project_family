@@ -14,7 +14,7 @@
         </tr>
     {% for family in pagination %}
         <tr>
-            <td><a href="{{ path('family_show', {slug: family.slug}) }}">{{ family.familyName }}</a></td>
+        <td><a href="{{ path('family_show', {slug: family.slug}) }}">{{ family.familyName }}</a></td>
         <td>{{ family.fatherName }}</td>
         <td>{{ family.fatherDateOfBirth|date('d-m-Y') }}</td>
         <td>{{ family.motherName }}</td>

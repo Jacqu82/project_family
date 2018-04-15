@@ -20,10 +20,10 @@ class ChildRepository extends EntityRepository
     public function findBiggestFamily()
     {
         $connection = $this->getEntityManager()->getConnection();
-        $sql = "SELECT COUNT(family_id) as count, f.family_name FROM `child` c
+        $sql = "SELECT COUNT(family_id) as count, f.family_name FROM child c
                 LEFT JOIN family f ON c.family_id = f.id
                 GROUP By family_id  
-                ORDER BY COUNT(family_id) DESC LIMIT 3";
+                ORDER BY COUNT(family_id) DESC LIMIT 5";
         $result = $connection->prepare($sql);
         $result->execute();
 
@@ -33,7 +33,7 @@ class ChildRepository extends EntityRepository
     public function findMostOccurrencesChildName()
     {
         $connection = $this->getEntityManager()->getConnection();
-        $sql = "SELECT name, COUNT(family_id) count FROM child GROUP By name ORDER BY COUNT(family_id) DESC LIMIT 3";
+        $sql = "SELECT name, COUNT(family_id) count FROM child GROUP By name ORDER BY (COUNT(family_id)) DESC LIMIT 5";
         $result = $connection->prepare($sql);
         $result->execute();
 
