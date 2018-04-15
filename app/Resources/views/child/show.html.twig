@@ -1,0 +1,7 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {{ child.family.familyName }}
+    {{ child.name }}
+    {{ child.dateOfBirth|date('d-m-Y') }}
+{% endblock %}

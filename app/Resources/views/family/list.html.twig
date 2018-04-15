@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Hello World</h1>
+    <h2>Families</h2>
+
+    <table class="table table-striped">
+        <tr>
+            <th>Family's Name</th>
+            <th>Father's Name</th>
+            <th>Father's Date of Birth</th>
+            <th>Mothers's Name</th>
+            <th>Mothers's Date of Birth</th>
+        </tr>
+    {% for family in pagination %}
+        <tr>
+            <td><a href="{{ path('family_show', {slug: family.slug}) }}">{{ family.familyName }}</a></td>
+        <td>{{ family.fatherName }}</td>
+        <td>{{ family.fatherDateOfBirth|date('d-m-Y') }}</td>
+        <td>{{ family.motherName }}</td>
+        <td>{{ family.motherDateOfBirth|date('d-m-Y') }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+
+    {% if pagination|length > 0 %}
+        {{ knp_pagination_render(pagination) }}
+    {% endif %}
+{% endblock %}
+

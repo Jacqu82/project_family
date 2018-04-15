@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% set now =  'now'|date('Y') %}
+    {% set fatherYear = family.fatherDateOfBirth|date('Y') %}
+    {% set motherYear = family.motherDateOfBirth|date('Y') %}
+
+    <h2><a href="{{ path('family_edit', {slug: family.slug}) }}">{{ family.familyName }}</a></h2>
+    <dt>Father's Name</dt>
+    <dd>{{ family.fatherName }}</dd>
+    <dt>Father's Date of Birth</dt>
+    <dd>{{ family.fatherDateOfBirth|date('d-m-Y') }}</dd>
+    <dt>Father's Age</dt>
+    <dd>{{ now - fatherYear }}</dd><hr/>
+    <dt>Mothers's Name</dt>
+    <dd>{{ family.motherName }}</dd>
+    <dt>Mothers's Date of Birth</dt>
+    <dd>{{ family.motherDateOfBirth|date('d-m-Y') }}</dd>
+    <dt>Mother's Age</dt>
+    <dd>{{ now - motherYear }}</dd><hr/>
+    <dt>Children: {{ family.children|length }}</dt>
+
+    <dd>
+        <ul class="list-group">
+        {% for child in family.children %}
+            <li class="list-group-item js-children">
+                <a href="{{ path('child_show', {id: child.id}) }}">{{ child.name }},
+                    {{ child.dateOfBirth|date('d-m-Y') }}</a>
+            <a href="#" class="btn btn-link btn-xs pull-left js-remove-child"
+               data-url="{{ path('child_remove', {id: child.id}) }}">
+                <span class="fa fa-close"></span>
+            </a>
+            </li>
+        {% else %}
+            <h4>No children</h4>
+        {% endfor %}
+        </ul>
+    </dd>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/main.js') }}"></script>
+{% endblock %}
+

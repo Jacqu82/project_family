@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h3>Najpopularniejsze imiona wśród dzieci</h3>
+    {% for mostOccurrencesChildName in mostOccurrencesChildNames %}
+    <h4>{{ mostOccurrencesChildName['name'] }} - {{ mostOccurrencesChildName['count'] }} times</h4>
+    {% endfor %}
+
+    <h3>Średni wiek dzieci</h3>
+    <h4>{{ ageAvg['childAvg']|number_format(2, '.') }}</h4>
+
+    <h3>Średni wiek rodziców</h3>
+    <h4>Father: {{ ageAvg['fatherAvg']|number_format(2, '.') }}</h4>
+    <h4>Mother: {{ ageAvg['motherAvg']|number_format(2, '.') }}</h4>
+
+    <h3>Średnia liczba dzieci w rodzinie</h3>
+    <h4>{{ childrenAvg|number_format(2, '.') }}</h4>
+
+    <h3>Lista najliczniejszych rodzin</h3>
+    {% for biggestFamily in biggestFamilies %}
+        <h4>{{ biggestFamily['family_name'] }} - {{ biggestFamily['count'] }} persons</h4>
+    {% endfor %}
+
+{% endblock %}
+

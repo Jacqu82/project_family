@@ -1,0 +1,44 @@
+
+{% import _self as formMacros %}
+
+{% macro printChildRow(childrenForm) %}
+    <div class="col-xs-4 js-child-edit-form">
+        <a href="#" class="js-remove-child-form pull-right">
+            <span class="fa fa-close"></span>
+        </a>
+        {#{% if childrenForm.family is defined %}#}
+            {#{{ form_row(childrenForm.family) }}#}
+        {#{% else %}#}
+            {#<strong>{{ childrenForm.vars.data.family.familyName }}</strong>#}
+        {#{% endif %}#}
+
+        {{ form_row(childrenForm.name) }}
+        {{ form_row(childrenForm.dateOfBirth) }}
+    </div>
+{% endmacro %}
+
+{{ form_start(form) }}
+
+    {{ form_row(form.familyName) }}
+    {{ form_row(form.fatherName) }}
+    {{ form_row(form.fatherDateOfBirth) }}
+    {{ form_row(form.motherName) }}
+    {{ form_row(form.motherDateOfBirth) }}
+
+    <h4>Children</h4>
+
+    <div class="row js-child-wrapper"
+    data-prototype="{{ formMacros.printChildRow(form.children.vars.prototype)|e('html_attr') }}"
+    data-index="{{ form.children|length }}">
+    {% for childrenForm in form.children %}
+        {{ formMacros.printChildRow(childrenForm) }}
+    {% endfor %}
+        <a href="#" class="js-child-add">
+            <span class="fa fa-plus-circle">Add another Child</span>
+        </a>
+    </div>
+    {# prevents weird label from showing up in new #}
+    {{ form_widget(form.children) }}
+    <button type="submit" class="btn btn-success" formnovalidate>Submit</button>
+
+{{ form_end(form) }}
