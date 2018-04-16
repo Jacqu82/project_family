@@ -1,6 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    {% set now =  'now'|date('Y') %}
+    {% set months =  'now'|date('m') %}
 
     <h3>Najpopularniejsze imiona wśród dzieci</h3>
     {% for mostOccurrencesChildName in mostOccurrencesChildNames %}
@@ -21,6 +23,30 @@
     {% for biggestFamily in biggestFamilies %}
         <h4>{{ biggestFamily['family_name'] }} - {{ biggestFamily['count'] }} persons</h4>
     {% endfor %}
+
+    <h3>The Oldest Fathers</h3>
+    {% for oldestFather in oldestFathers %}
+        {% set fatherYear = oldestFather['fatherDateOfBirth']|date('Y') %}
+        <h4>{{ oldestFather['fatherName'] }} {{ now - fatherYear }} years</h4>
+    {% endfor %}
+
+    <h3>The Oldest Mothers</h3>
+    {% for oldestMother in oldestMothers %}
+        {% set motherYear = oldestMother['motherDateOfBirth']|date('Y') %}
+        <h4>{{ oldestMother['motherName'] }} {{ now - motherYear }} years</h4>
+    {% endfor %}
+
+    <h3>The Youngest Children</h3>
+    {% for youngestChild in youngestChildren %}
+        {% set childYear = youngestChild['dateOfBirth']|date('m') %}
+        <h4>{{ youngestChild['name'] }} {{ months - childYear }} months</h4>
+    {% endfor %}
+    <hr/>
+    {% if form is defined %}
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        {{ form_end(form) }}
+    {% endif %}
 
 {% endblock %}
 

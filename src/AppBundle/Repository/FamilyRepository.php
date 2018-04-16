@@ -19,4 +19,24 @@ class FamilyRepository extends EntityRepository
 
         return $result->fetch();
     }
+
+    public function findOldestFathers()
+    {
+        return $this->createQueryBuilder('f')
+            ->select('f.fatherName', 'f.fatherDateOfBirth')
+            ->orderBy('f.fatherDateOfBirth')
+            ->setMaxResults(3)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findOldestMothers()
+    {
+        return $this->createQueryBuilder('f')
+            ->select('f.motherName', 'f.motherDateOfBirth')
+            ->orderBy('f.motherDateOfBirth')
+            ->setMaxResults(3)
+            ->getQuery()
+            ->getResult();
+    }
 }

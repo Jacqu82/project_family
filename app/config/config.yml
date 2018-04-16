@@ -76,7 +76,7 @@ swiftmailer:
     spool: { type: memory }
 
 knp_paginator:
-#    page_range: 5
+    #page_range: 5
     default_options:
         page_name: page                # page query parameter name
         sort_field_name: sort          # sort field query parameter name
@@ -84,3 +84,16 @@ knp_paginator:
         distinct: true                 # ensure distinct results, useful when ORM queries are using GROUP BY statements
     template:
         pagination: 'default/pagination.html.twig'     # sliding pagination controls template
+
+knp_snappy:
+    process_timeout: 20 # In seconds
+    temporary_folder: "%kernel.cache_dir%/snappy"
+    pdf:
+        enabled: true
+        binary: /usr/bin/wkhtmltopdf
+        options: []
+#            no-outline: true
+#            page-size: LETTER
+            # Recommended to set UTF-8 as default encoding :)
+#            encoding: UTF-8
+

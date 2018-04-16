@@ -4,12 +4,16 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Child;
 use AppBundle\Entity\Family;
+use AppBundle\Form\DownloadType;
 use AppBundle\Form\FamilyType;
+use Knp\Bundle\SnappyBundle\Snappy\Response\PdfResponse;
 use Knp\Component\Pager\PaginatorInterface;
+use Knp\Snappy\Pdf;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * @Route("/family")
@@ -21,10 +25,12 @@ class FamilyController extends Controller
 {
 
     private $paginator;
+    private $pdf;
 
-    public function __construct(PaginatorInterface $paginator)
+    public function __construct(PaginatorInterface $paginator, Pdf $pdf)
     {
         $this->paginator = $paginator;
+        $this->pdf = $pdf;
     }
 
     /**
@@ -40,10 +46,11 @@ class FamilyController extends Controller
 
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
-//            dump($form->getData()); die;
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($form->getData());
                 $em->flush();
+
+                return $this->redirectToRoute('family_show', ['slug' => $form->getData()->getSlug()]);
             }
         }
 
@@ -108,24 +115,70 @@ class FamilyController extends Controller
         ]);
     }
 
-    /**
-     * @Route("/stats", name="family_stats")
-     *
-     * @return Response
-     */
-    public function statsPageAction()
+    private function printStats()
     {
         $family = new Family();
         $em = $this->getDoctrine()->getManager();
         $childRepository = $em->getRepository(Child::class);
         $familyRepository = $em->getRepository(Family::class);
         $familyId = $familyRepository->findOneBy(['id' => $family->getId()]);
+        $form = $this->createForm(DownloadType::class);
 
-        return $this->render('family/stats.html.twig', [
+        return [
             'ageAvg' => $familyRepository->findAverageParentsAge(),
             'childrenAvg' => $childRepository->findAvgChildInFamily($familyId),
             'biggestFamilies' => $childRepository->findBiggestFamily(),
-            'mostOccurrencesChildNames' => $childRepository->findMostOccurrencesChildName()
-        ]);
+            'mostOccurrencesChildNames' => $childRepository->findMostOccurrencesChildName(),
+            'oldestFathers' => $familyRepository->findOldestFathers(),
+            'oldestMothers' => $familyRepository->findOldestMothers(),
+            'youngestChildren' => $childRepository->findYoungestChildren(),
+            'form' => $form->createView()
+        ];
     }
+
+    /**
+     * @Route("/stats", name="family_stats")
+     *
+     * @return Response
+     */
+    public function statsPageAction(Request $request)
+    {
+        $form = $this->createForm(DownloadType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            $snappy = $this->pdf;
+            $html = $this->renderView('family/stats.html.twig', $this->printStats());
+            $filename = 'myFirstSnappyPDF';
+
+            return new Response(
+                $snappy->getOutputFromHtml($html),
+                200,
+                [
+                    'Content-Type' => 'application/pdf',
+                    'Content-Disposition' => 'attachment; filename="' . $filename . '.pdf"'
+                ]
+            );
+        }
+
+        return $this->render('family/stats.html.twig', $this->printStats());
+    }
+
+//    public function pdfAction()
+//    {
+//        $snappy = $this->get('knp_snappy.pdf');
+//        $filename = 'myFirstSnappyPDF';
+//
+//        // use absolute path !
+//        $pageUrl = $this->generateUrl('family_stats', array(), UrlGeneratorInterface::ABSOLUTE_URL);
+//
+//        return new Response(
+//            $snappy->getOutput($pageUrl),
+//            200,
+//            array(
+//                'Content-Type'          => 'application/pdf',
+//                'Content-Disposition'   => 'inline; filename="'.$filename.'.pdf"'
+//            )
+//        );
+//    }
 }

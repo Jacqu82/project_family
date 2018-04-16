@@ -39,4 +39,14 @@ class ChildRepository extends EntityRepository
 
         return $result->fetchAll();
     }
+
+    public function findYoungestChildren()
+    {
+        return $this->createQueryBuilder('c')
+            ->select('c.name', 'c.dateOfBirth')
+            ->orderBy('c.dateOfBirth', 'DESC')
+            ->setMaxResults(3)
+            ->getQuery()
+            ->getResult();
+    }
 }
