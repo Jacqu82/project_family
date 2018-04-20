@@ -90,8 +90,11 @@ knp_snappy:
     temporary_folder: "%kernel.cache_dir%/snappy"
     pdf:
         enabled: true
-        binary: /usr/bin/wkhtmltopdf
+#        binary: /usr/bin/wkhtmltopdf
+        binary: "wkhtmltopdf"
         options: []
+#            - { name: 'viewport-size', value: ‘1024x768’ }
+#            - { name: 'page-size', value: 'A4' }
 #            no-outline: true
 #            page-size: LETTER
             # Recommended to set UTF-8 as default encoding :)

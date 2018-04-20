@@ -6,14 +6,13 @@ use AppBundle\Entity\Child;
 use AppBundle\Entity\Family;
 use AppBundle\Form\DownloadType;
 use AppBundle\Form\FamilyType;
-use Knp\Bundle\SnappyBundle\Snappy\Response\PdfResponse;
 use Knp\Component\Pager\PaginatorInterface;
 use Knp\Snappy\Pdf;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
 
 /**
  * @Route("/family")
@@ -115,7 +114,7 @@ class FamilyController extends Controller
         ]);
     }
 
-    private function printStats()
+    private function printStats($isForm = false)
     {
         $family = new Family();
         $em = $this->getDoctrine()->getManager();
@@ -124,7 +123,7 @@ class FamilyController extends Controller
         $familyId = $familyRepository->findOneBy(['id' => $family->getId()]);
         $form = $this->createForm(DownloadType::class);
 
-        return [
+        $arr = [
             'ageAvg' => $familyRepository->findAverageParentsAge(),
             'childrenAvg' => $childRepository->findAvgChildInFamily($familyId),
             'biggestFamilies' => $childRepository->findBiggestFamily(),
@@ -132,13 +131,19 @@ class FamilyController extends Controller
             'oldestFathers' => $familyRepository->findOldestFathers(),
             'oldestMothers' => $familyRepository->findOldestMothers(),
             'youngestChildren' => $childRepository->findYoungestChildren(),
-            'form' => $form->createView()
         ];
+
+        if ($isForm) {
+            $arr['form'] = $form->createView();
+        }
+
+        return $arr;
     }
 
     /**
      * @Route("/stats", name="family_stats")
      *
+     * @param $request
      * @return Response
      */
     public function statsPageAction(Request $request)
@@ -148,20 +153,21 @@ class FamilyController extends Controller
 
         if ($form->isSubmitted()) {
             $snappy = $this->pdf;
-            $html = $this->renderView('family/stats.html.twig', $this->printStats());
-            $filename = 'myFirstSnappyPDF';
+            $html = $this->renderView('family/stats.html.twig', $this->printStats(false));
+            //$html = '<h1>Hello World</h1>';
+            $filename = sprintf('family-stats-%s.pdf', date('Y-m-d'));
 
             return new Response(
                 $snappy->getOutputFromHtml($html),
                 200,
                 [
                     'Content-Type' => 'application/pdf',
-                    'Content-Disposition' => 'attachment; filename="' . $filename . '.pdf"'
+                    'Content-Disposition' => sprintf('attachment; filename="%s"', $filename)
                 ]
             );
         }
 
-        return $this->render('family/stats.html.twig', $this->printStats());
+        return $this->render('family/stats.html.twig', $this->printStats(true));
     }
 
 //    public function pdfAction()
@@ -177,7 +183,7 @@ class FamilyController extends Controller
 //            200,
 //            array(
 //                'Content-Type'          => 'application/pdf',
-//                'Content-Disposition'   => 'inline; filename="'.$filename.'.pdf"'
+//                'Content-Disposition'   => 'attachment; filename="'.$filename.'.pdf"'
 //            )
 //        );
 //    }
