@@ -5,19 +5,17 @@ namespace AppBundle\Controller\Api;
 use AppBundle\Entity\Family;
 use AppBundle\Form\FamilyType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/api")
  */
-class FamilyController extends Controller
+class FamilyController extends BaseController
 {
-
     /**
      * @Route("/families", name="api_families_create")
      * @Method("POST")
@@ -33,6 +31,26 @@ class FamilyController extends Controller
         $em->flush();
 
         return new JsonResponse($this->serialize($family), 201);
+    }
+
+    /**
+     * @Route("/families/{id}")
+     * @Method("PUT")
+     */
+    public function updateAction($id, Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        /** @var Family $family */
+        $family = $em->getRepository(Family::class)->find($id);
+        $this->throwNotFoundException($family);
+
+        $form = $this->createForm(FamilyType::class, $family);
+        $this->processForm($request, $form);
+
+        $em->flush();
+
+        return new JsonResponse($this->serialize($family), 200);
     }
 
     /**
@@ -52,14 +70,32 @@ class FamilyController extends Controller
     }
 
     /**
+     * @Route("/families/{id}")
+     * @Method("DELETE")
+     */
+    public function deleteAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        /** @var Family $family */
+        $family = $em->getRepository(Family::class)->find($id);
+
+        $this->throwNotFoundException($family);
+
+        $em->remove($family);
+        $em->flush();
+
+        return new Response(null, 204);
+    }
+
+    /**
      * @Route("/families/{id}", name="api_families_show")
      * @Method("GET")
      */
-    public function showAction(Family $family)
+    public function showAction($id)
     {
-        if (!$family) {
-            throw new NotFoundHttpException('Family not found!');
-        }
+        /** @var Family $family */
+        $family = $this->getDoctrine()->getRepository(Family::class)->find($id);
+        $this->throwNotFoundException($family);
 
         $data = $this->serialize($family);
 
@@ -67,29 +103,12 @@ class FamilyController extends Controller
     }
 
     /**
-     * @param Family $data
+     * @param Family $family
      */
-    private function serialize($data): array
+    private function throwNotFoundException($family)
     {
-        return [
-            'familyName' => $data->getFamilyName(),
-            'motherName' => $data->getMotherName(),
-            'motherDateOfBirth' => $data->getMotherDateOfBirth(),
-            'fatherName' => $data->getFatherName(),
-            'fatherDateOfBirth' => $data->getFatherDateOfBirth()
-        ];
-    }
-
-    private function processForm(Request $request, FormInterface $form)
-    {
-        $data = json_decode($request->getContent(), true);
-//        if ($data === null) {
-//            $apiProblem = new ApiProblem(400, ApiProblem::TYPE_INVALID_REQUEST_BODY_FORMAT);
-//
-//            throw new ApiProblemException($apiProblem);
-//        }
-
-        $clearMissing = $request->getMethod() != 'PATCH';
-        $form->submit($data, $clearMissing);
+        if (!$family) {
+            throw new NotFoundHttpException('Family not found!');
+        }
     }
 }
