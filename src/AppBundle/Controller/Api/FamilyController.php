@@ -5,7 +5,6 @@ namespace AppBundle\Controller\Api;
 use AppBundle\Entity\Family;
 use AppBundle\Form\FamilyType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -30,7 +29,7 @@ class FamilyController extends BaseController
         $em->persist($family);
         $em->flush();
 
-        return new JsonResponse($this->serialize($family), 201);
+        return new Response($this->serialize($family), 201);
     }
 
     /**
@@ -50,7 +49,7 @@ class FamilyController extends BaseController
 
         $em->flush();
 
-        return new JsonResponse($this->serialize($family), 200);
+        return new Response($this->serialize($family), 200);
     }
 
     /**
@@ -59,14 +58,10 @@ class FamilyController extends BaseController
      */
     public function listAction()
     {
+        /** @var Family[] $families */
         $families = $this->getDoctrine()->getRepository(Family::class)->findAll();
 
-        $data = [];
-        foreach ($families as $family) {
-            $data['family'][] = $this->serialize($family);
-        }
-
-        return new JsonResponse($data, 200, []);
+        return new Response($this->serialize($families), 200);
     }
 
     /**
@@ -99,7 +94,7 @@ class FamilyController extends BaseController
 
         $data = $this->serialize($family);
 
-        return new JsonResponse($data, 200);
+        return new Response($data, 200);
     }
 
     /**

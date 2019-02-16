@@ -5,11 +5,21 @@ namespace AppBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Hateoas\Configuration\Annotation as Hateoas;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Repository\FamilyRepository")
  * @ORM\Table(name="family")
+ * @Serializer\ExclusionPolicy("all")
+ * @Hateoas\Relation(
+ *      "self",
+ *      href = @Hateoas\Route(
+ *              "api_families_show",
+ *              parameters = {"id" = "expr(object.getId())"}
+ *      ),
+ * )
  */
 class Family
 {
@@ -37,6 +47,7 @@ class Family
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
+     * @Serializer\Expose()
      */
     private $familyName;
 
@@ -49,24 +60,28 @@ class Family
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
+     * @Serializer\Expose()
      */
     private $motherName;
 
     /**
      * @ORM\Column(type="date")
      * @Assert\NotBlank()
+     * @Serializer\Expose()
      */
     private $motherDateOfBirth;
 
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
+     * @Serializer\Expose()
      */
     private $fatherName;
 
     /**
      * @ORM\Column(type="date")
      * @Assert\NotBlank()
+     * @Serializer\Expose()
      */
     private $fatherDateOfBirth;
 

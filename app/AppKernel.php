@@ -20,6 +20,8 @@ class AppKernel extends Kernel
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
             new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
             new Knp\Bundle\SnappyBundle\KnpSnappyBundle(),
+            new JMS\SerializerBundle\JMSSerializerBundle(),
+            new Bazinga\Bundle\HateoasBundle\BazingaHateoasBundle(),
             new AppBundle\AppBundle(),
         ];
 

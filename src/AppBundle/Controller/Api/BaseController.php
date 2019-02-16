@@ -2,35 +2,20 @@
 
 namespace AppBundle\Controller\Api;
 
-use AppBundle\Entity\Family;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 abstract class BaseController extends Controller
 {
-    /**
-     * @param Family $data
-     */
-    protected function serialize($data): array
+    protected function serialize($data)
     {
-        return [
-            'familyName' => $data->getFamilyName(),
-            'motherName' => $data->getMotherName(),
-            'motherDateOfBirth' => $data->getMotherDateOfBirth(),
-            'fatherName' => $data->getFatherName(),
-            'fatherDateOfBirth' => $data->getFatherDateOfBirth()
-        ];
+        return $this->container->get('jms_serializer')->serialize($data, 'json');
     }
 
     protected function processForm(Request $request, FormInterface $form): void
     {
         $data = json_decode($request->getContent(), true);
-//        if ($data === null) {
-//            $apiProblem = new ApiProblem(400, ApiProblem::TYPE_INVALID_REQUEST_BODY_FORMAT);
-//
-//            throw new ApiProblemException($apiProblem);
-//        }
 
         $clearMissing = $request->getMethod() != 'PATCH';
         $form->submit($data, $clearMissing);
