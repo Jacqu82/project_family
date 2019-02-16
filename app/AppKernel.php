@@ -1,8 +1,8 @@
 <?php
 
+use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\Config\Loader\LoaderInterface;
 
 class AppKernel extends Kernel
 {
@@ -41,6 +41,11 @@ class AppKernel extends Kernel
     public function getRootDir()
     {
         return __DIR__;
+    }
+
+    public function getProjectDir()
+    {
+        return __DIR__ . '/..';
     }
 
     public function getCacheDir()
