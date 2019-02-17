@@ -5,6 +5,8 @@ namespace AppBundle\Controller\Api;
 use AppBundle\Entity\Child;
 use AppBundle\Entity\Family;
 use AppBundle\Form\FamilyType;
+use Hateoas\Representation\CollectionRepresentation;
+use Hateoas\Representation\PaginatedRepresentation;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -57,12 +59,36 @@ class FamilyController extends BaseController
      * @Route("/families", name="api_families_list")
      * @Method("GET")
      */
-    public function listAction()
+    public function listAction(Request $request)
     {
-        /** @var Family[] $families */
-        $families = $this->getDoctrine()->getRepository(Family::class)->findAll();
+        $filter = $request->query->get('filter');
 
-        return $this->createApiResponse($families);
+        if ($filter) {
+            $families = $this->getDoctrine()->getRepository(Family::class)->findAllByQueryParam($filter);
+        } else {
+            $families = $this->getDoctrine()->getRepository(Family::class)->findAll();
+        }
+
+        $page = (int)$request->query->get('page', 1);
+        $limit = (int)$request->query->get('limit', 5);
+        $numberOfPages = ceil(count($families) / $limit);
+        $offset = ($page - 1) * $limit;
+
+        $collection = new CollectionRepresentation(
+            array_slice($families, $offset, $limit),
+            'families'
+        );
+
+        $paginated = new PaginatedRepresentation(
+            $collection,
+            'api_families_list',
+            array_merge(array(), $request->query->all()),
+            $page,
+            $limit,
+            $numberOfPages
+        );
+
+        return $this->createApiResponse($paginated);
     }
 
     /**

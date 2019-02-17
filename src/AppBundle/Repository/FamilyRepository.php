@@ -2,6 +2,7 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Family;
 use Doctrine\ORM\EntityRepository;
 
 class FamilyRepository extends EntityRepository
@@ -36,6 +37,23 @@ class FamilyRepository extends EntityRepository
             ->select('f.motherName', 'f.motherDateOfBirth')
             ->orderBy('f.motherDateOfBirth')
             ->setMaxResults(3)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param string $filter
+     * @return Family[]
+     */
+    public function findAllByQueryParam(string $filter = '')
+    {
+        $qb = $this->createQueryBuilder('f');
+        if ($filter) {
+            $qb->andWhere('f.familyName LIKE :filter OR f.motherName LIKE :filter OR f.fatherName LIKE :filter')
+                ->setParameter('filter', '%' . $filter . '%');
+        }
+
+        return $qb
             ->getQuery()
             ->getResult();
     }
