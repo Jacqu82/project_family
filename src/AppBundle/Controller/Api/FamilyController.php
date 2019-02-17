@@ -139,7 +139,7 @@ class FamilyController extends BaseController
     private function throwNotFoundException($family)
     {
         if (!$family) {
-            throw new NotFoundHttpException('Family not found!');
+            throw new NotFoundHttpException(sprintf('Family not found!'));
         }
     }
 }
