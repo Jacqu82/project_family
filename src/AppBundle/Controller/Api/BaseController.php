@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Api;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 abstract class BaseController extends Controller
 {
@@ -19,5 +20,15 @@ abstract class BaseController extends Controller
 
         $clearMissing = $request->getMethod() != 'PATCH';
         $form->submit($data, $clearMissing);
+    }
+
+    protected function createApiResponse($data, $statusCode = 200)
+    {
+        $json = $this->serialize($data);
+        $response = new Response($json, $statusCode, [
+            'Content-Type' => 'application/hal+json'
+        ]);
+
+        return $response;
     }
 }

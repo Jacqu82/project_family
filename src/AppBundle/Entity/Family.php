@@ -20,6 +20,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              parameters = {"id" = "expr(object.getId())"}
  *      ),
  * )
+ * @Hateoas\Relation(
+ *      "children",
+ *      href = @Hateoas\Route(
+ *              "api_families_children_list",
+ *              parameters = {"id" = "expr(object.getId())"}
+ *      ),
+ * )
  */
 class Family
 {

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Api;
 
+use AppBundle\Entity\Child;
 use AppBundle\Entity\Family;
 use AppBundle\Form\FamilyType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -29,7 +30,7 @@ class FamilyController extends BaseController
         $em->persist($family);
         $em->flush();
 
-        return new Response($this->serialize($family), 201);
+        return $this->createApiResponse($family, 201);
     }
 
     /**
@@ -49,7 +50,7 @@ class FamilyController extends BaseController
 
         $em->flush();
 
-        return new Response($this->serialize($family), 200);
+        return $this->createApiResponse($family);
     }
 
     /**
@@ -61,7 +62,7 @@ class FamilyController extends BaseController
         /** @var Family[] $families */
         $families = $this->getDoctrine()->getRepository(Family::class)->findAll();
 
-        return new Response($this->serialize($families), 200);
+        return $this->createApiResponse($families);
     }
 
     /**
@@ -92,9 +93,18 @@ class FamilyController extends BaseController
         $family = $this->getDoctrine()->getRepository(Family::class)->find($id);
         $this->throwNotFoundException($family);
 
-        $data = $this->serialize($family);
+        return $this->createApiResponse($family);
+    }
 
-        return new Response($data, 200);
+    /**
+     * @Route("/families/{id}/children", name="api_families_children_list")
+     * @Method("GET")
+     */
+    public function childrenListAction(Family $family)
+    {
+        $children = $this->getDoctrine()->getRepository(Child::class)->findBy(['family' => $family]);
+
+        return $this->createApiResponse($children);
     }
 
     /**
