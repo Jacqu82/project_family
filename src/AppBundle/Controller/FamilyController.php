@@ -12,6 +12,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 
 /**
@@ -170,21 +171,21 @@ class FamilyController extends Controller
         return $this->render('family/stats.html.twig', $this->printStats(true));
     }
 
-//    public function pdfAction()
-//    {
-//        $snappy = $this->get('knp_snappy.pdf');
-//        $filename = 'myFirstSnappyPDF';
-//
-//        // use absolute path !
-//        $pageUrl = $this->generateUrl('family_stats', array(), UrlGeneratorInterface::ABSOLUTE_URL);
-//
-//        return new Response(
-//            $snappy->getOutput($pageUrl),
-//            200,
-//            array(
-//                'Content-Type'          => 'application/pdf',
-//                'Content-Disposition'   => 'attachment; filename="'.$filename.'.pdf"'
-//            )
-//        );
-//    }
+    public function pdfAction()
+    {
+        $snappy = $this->get('knp_snappy.pdf');
+        $filename = 'myFirstSnappyPDF';
+
+        // use absolute path !
+        $pageUrl = $this->generateUrl('family_stats', array(), UrlGeneratorInterface::ABSOLUTE_URL);
+
+        return new Response(
+            $snappy->getOutput($pageUrl),
+            200,
+            array(
+                'Content-Type'          => 'application/pdf',
+                'Content-Disposition'   => 'attachment; filename="'.$filename.'.pdf"'
+            )
+        );
+    }
 }
