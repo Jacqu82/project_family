@@ -3,9 +3,8 @@
 namespace AppBundle\Repository;
 
 use AppBundle\Entity\Family;
-use Doctrine\ORM\EntityRepository;
 
-class FamilyRepository extends EntityRepository
+class FamilyRepository extends AbstractRepository
 {
     public function findAverageParentsAge()
     {

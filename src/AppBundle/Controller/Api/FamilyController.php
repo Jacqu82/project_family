@@ -4,6 +4,7 @@ namespace AppBundle\Controller\Api;
 
 use AppBundle\Entity\Child;
 use AppBundle\Entity\Family;
+use AppBundle\Form\FamilyApiType;
 use AppBundle\Form\FamilyType;
 use Hateoas\Representation\CollectionRepresentation;
 use Hateoas\Representation\PaginatedRepresentation;
@@ -19,13 +20,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class FamilyController extends BaseController
 {
     /**
-     * @Route("/families", name="api_families_create")
-     * @Method("POST")
+     * @Route("/families", name="api_families_create", methods={"POST"})
      */
     public function newAction(Request $request)
     {
         $family = new Family();
-        $form = $this->createForm(FamilyType::class, $family);
+        $form = $this->createForm(FamilyApiType::class, $family);
         $this->processForm($request, $form);
 
         $em = $this->getDoctrine()->getManager();

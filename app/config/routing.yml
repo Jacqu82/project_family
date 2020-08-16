@@ -1,3 +1,7 @@
-app:
+web:
     resource: '@AppBundle/Controller/'
+    type: annotation
+
+api:
+    resource: '@AppBundle/Controller/Api'
     type: annotation

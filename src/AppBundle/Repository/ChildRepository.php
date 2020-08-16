@@ -2,9 +2,7 @@
 
 namespace AppBundle\Repository;
 
-use Doctrine\ORM\EntityRepository;
-
-class ChildRepository extends EntityRepository
+class ChildRepository extends AbstractRepository
 {
     public function findAvgChildInFamily($familyId)
     {
@@ -17,17 +15,21 @@ class ChildRepository extends EntityRepository
         return $result->fetchColumn();
     }
 
-    public function findBiggestFamily()
+    public function findBiggestFamily(): array
     {
-        $connection = $this->getEntityManager()->getConnection();
-        $sql = "SELECT COUNT(family_id) as count, f.family_name FROM child c
-                LEFT JOIN family f ON c.family_id = f.id
-                GROUP By family_id  
-                ORDER BY COUNT(family_id) DESC LIMIT 5";
-        $result = $connection->prepare($sql);
-        $result->execute();
+        $qb = $this->createDBALQueryBuilder();
+        $qb
+            ->select('COUNT(family_id) as count', 'f.family_name')
+            ->from('child', 'c')
+            ->leftJoin('c', 'family', 'f', 'c.family_id = f.id')
+            ->groupBy('family_id')
+            ->orderBy('COUNT(family_id)', 'DESC')
+            ->setMaxResults(5);
 
-        return $result->fetchAll();
+//        dump($qb->getSQL());
+//        dump($qb->execute()->fetchAll());
+
+        return $qb->execute()->fetchAll();
     }
 
     public function findMostOccurrencesChildName()
@@ -40,13 +42,22 @@ class ChildRepository extends EntityRepository
         return $result->fetchAll();
     }
 
-    public function findYoungestChildren()
+    public function findYoungestChildren(): array
     {
-        return $this->createQueryBuilder('c')
-            ->select('c.name', 'c.dateOfBirth')
-            ->orderBy('c.dateOfBirth', 'DESC')
-            ->setMaxResults(3)
-            ->getQuery()
-            ->getResult();
+        $qb = $this->createDBALQueryBuilder();
+        $qb
+            ->select('c.name', 'c.date_of_birth')
+            ->from('child', 'c')
+            ->orderBy('c.date_of_birth', 'DESC')
+            ->setMaxResults(3);
+
+//        dump($qb->getSQL());
+//        dump($qb->execute()->fetchAll());
+//        dump($qb->execute()->fetchAll(\PDO::FETCH_BOTH));
+//        dump($qb->execute()->fetchAll(\PDO::FETCH_GROUP));
+//        dump($qb->execute()->fetchAll(\PDO::FETCH_COLUMN));
+//        dump($qb->execute()->fetchAll(\PDO::FETCH_KEY_PAIR));
+
+        return $qb->execute()->fetchAll();
     }
 }

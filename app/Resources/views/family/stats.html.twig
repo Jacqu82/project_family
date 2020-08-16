@@ -38,7 +38,7 @@
 
     <h3>The Youngest Children</h3>
     {% for youngestChild in youngestChildren %}
-        {% set childYear = youngestChild['dateOfBirth']|date('m') %}
+        {% set childYear = youngestChild['date_of_birth']|date('m') %}
         <h4>{{ youngestChild['name'] }} {{ months - childYear }} months</h4>
     {% endfor %}
     <hr/>

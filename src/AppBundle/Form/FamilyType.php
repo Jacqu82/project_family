@@ -34,6 +34,8 @@ class FamilyType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(['data_class' => Family::class]);
+        $resolver->setDefaults([
+            'data_class' => Family::class
+        ]);
     }
 }
